@@ -87,3 +87,30 @@ docker compose -f docker-compose.yml -f .devcontainer/docker-compose.yml build -
 3. Run **Dev Containers: Rebuild Container** (or **Rebuild Container Without Cache**).
 
 On Codespaces, **Codespaces: Rebuild Container** is usually enough; if the error persists, delete the codespace and create a new one.
+
+### `COMPOSE_PROJECT_NAME` を変えてもコンテナ名が `wp-*` のまま
+
+Dev Containers / Codespaces は起動時に `.env` の `COMPOSE_PROJECT_NAME` を読み、`docker compose --project-name …` を付けて起動します。**`.env` を変えただけでは反映されません。**
+
+1. リポジトリ**ルート**の `.env` を編集（`.devcontainer/.env` ではない）:
+
+   ```env
+   COMPOSE_PROJECT_NAME=myproject
+   ```
+
+2. 古い `wp` スタックを止める（ホストまたは DevContainer 内）:
+
+   ```bash
+   docker compose -p wp down
+   ```
+
+3. **Dev Containers: Rebuild Container**（できれば Without Cache）
+
+4. 確認:
+
+   ```bash
+   docker compose ls
+   docker ps --format '{{.Names}}' | head
+   ```
+
+`docker-compose.yml` 先頭の `name:` も同じ変数を参照します。`Reopen in Container` だけではプロジェクト名は変わりません。

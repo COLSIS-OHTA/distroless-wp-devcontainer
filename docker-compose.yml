@@ -1,3 +1,6 @@
+# Compose project name (container prefix). Override in .env: COMPOSE_PROJECT_NAME=myproject
+name: ${COMPOSE_PROJECT_NAME:-wp}
+
 services:
   php:
     build:
