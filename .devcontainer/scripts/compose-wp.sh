@@ -1,14 +1,64 @@
 #!/usr/bin/env bash
-# Run WP-CLI in the wp-cli service (DevContainer / local Compose).
+# Run WP-CLI in the running wp-cli service (DevContainer / Codespaces).
 set -euo pipefail
 
-root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-cd "$root"
+find_project_root() {
+  local dir="${1:-$PWD}"
+  while [ "$dir" != "/" ]; do
+    if [ -f "$dir/docker-compose.yml" ] && [ -d "$dir/.devcontainer" ]; then
+      printf '%s\n' "$dir"
+      return 0
+    fi
+    dir="$(dirname "$dir")"
+  done
+  return 1
+}
 
-compose=(docker compose -f docker-compose.yml -f .devcontainer/docker-compose.yml)
+read_compose_project_name() {
+  local env_file="$1"
+  local value
 
-if [ -t 0 ] && [ -t 1 ]; then
-  exec "${compose[@]}" exec wp-cli wp "$@"
+  [ -f "$env_file" ] || return 0
+  value="$(grep -E '^COMPOSE_PROJECT_NAME=' "$env_file" | tail -1 | cut -d= -f2- | tr -d "\"'" || true)"
+  [ -n "$value" ] && printf '%s\n' "$value"
+}
+
+find_wp_cli_container() {
+  local project="$1"
+  local container
+
+  container="$(docker ps \
+    --filter "label=com.docker.compose.service=wp-cli" \
+    --filter "label=com.docker.compose.project=${project}" \
+    --format '{{.Names}}' | head -1)"
+  if [ -n "$container" ]; then
+    printf '%s\n' "$container"
+    return 0
+  fi
+
+  container="$(docker ps \
+    --filter "label=com.docker.compose.service=wp-cli" \
+    --format '{{.Names}}' | head -1)"
+  [ -n "$container" ] && printf '%s\n' "$container"
+}
+
+root="$(find_project_root "$PWD")" || {
+  echo "compose-wp: could not find repository root (docker-compose.yml)." >&2
+  exit 1
+}
+
+project="$(read_compose_project_name "$root/.env" || true)"
+project="${project:-wp}"
+
+container="$(find_wp_cli_container "$project")" || true
+if [ -z "$container" ]; then
+  echo "compose-wp: wp-cli container is not running (project: ${project})." >&2
+  echo "compose-wp: start services with Dev Containers: Rebuild Container, or run docker compose up -d on the host." >&2
+  exit 1
 fi
 
-exec "${compose[@]}" exec -T wp-cli wp "$@"
+if [ -t 0 ] && [ -t 1 ]; then
+  exec docker exec -it "$container" wp "$@"
+fi
+
+exec docker exec -i "$container" wp "$@"

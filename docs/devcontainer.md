@@ -37,13 +37,14 @@ Examples:
 ```bash
 docker compose ps
 compose-wp plugin list
+compose-wp core version
 ```
 
-After changing `.devcontainer/`, run **Dev Containers: Rebuild Container**. If you see `docker: command not found`, rebuild.
+`compose-wp` runs `docker exec` against the running `wp-cli` container (no `docker-compose.yml` path resolution on the host). After changing `.devcontainer/scripts/compose-wp.sh`, run **Dev Containers: Rebuild Container** to refresh `/usr/local/bin/compose-wp`.
 
 ## Node / pnpm / safe-chain
 
-The `dev` image is built from `node:24-bookworm`.
+The `dev` image is built from `node:22.22.2-bookworm`.
 
 `pnpm@10.12.1` is installed in `.devcontainer/Dockerfile` during image build.
 `safe-chain` is also installed in `.devcontainer/Dockerfile` during image build.

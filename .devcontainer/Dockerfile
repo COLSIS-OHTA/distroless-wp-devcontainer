@@ -1,4 +1,4 @@
-FROM node:24-bookworm
+FROM node:22.22.2-bookworm
 
 ARG PNPM_VERSION=10.12.1
 
