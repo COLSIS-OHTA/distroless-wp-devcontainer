@@ -1,4 +1,4 @@
-# Compose project name (container prefix). Override in .env: COMPOSE_PROJECT_NAME=myproject
+# Compose project name (container prefix). Must be lowercase in .env (e.g. colsis-thailand-demo).
 name: ${COMPOSE_PROJECT_NAME:-wp}
 
 services:
