@@ -17,6 +17,43 @@
     "phpmyadmin",
     "mail"
   ],
+  "forwardPorts": [
+    "webserver:80",
+    "webserver:443",
+    "phpmyadmin:80",
+    "phpmyadmin:443",
+    "mail:8025"
+  ],
+  "portsAttributes": {
+    "webserver:80": {
+      "label": "WordPress (HTTP)",
+      "onAutoForward": "openBrowser",
+      "visibility": "public"
+    },
+    "webserver:443": {
+      "label": "WordPress (HTTPS)",
+      "onAutoForward": "notify",
+      "visibility": "public"
+    },
+    "phpmyadmin:80": {
+      "label": "phpMyAdmin (HTTP)",
+      "onAutoForward": "notify",
+      "visibility": "private"
+    },
+    "phpmyadmin:443": {
+      "label": "phpMyAdmin (HTTPS)",
+      "onAutoForward": "silent",
+      "visibility": "private"
+    },
+    "mail:8025": {
+      "label": "Mailpit",
+      "onAutoForward": "notify",
+      "visibility": "private"
+    }
+  },
+  "otherPortsAttributes": {
+    "onAutoForward": "ignore"
+  },
   "customizations": {
     "vscode": {
       "extensions": [
@@ -32,7 +69,11 @@
       }
     }
   },
+  "containerEnv": {
+    "BUILDX_NO_DEFAULT_ATTESTATIONS": "1",
+    "COMPOSE_BAKE": "false"
+  },
   "postCreateCommand": "node -v && npm -v && pnpm -v && safe-chain --version",
-  "postStartCommand": "echo 'DevContainer started. WordPress services are managed by Docker Compose.'",
+  "postStartCommand": "bash .devcontainer/scripts/print-service-urls.sh",
   "shutdownAction": "stopCompose"
 }

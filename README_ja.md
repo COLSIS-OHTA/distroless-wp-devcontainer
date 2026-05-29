@@ -175,6 +175,8 @@ docker compose ps
 docker compose exec wp-cli wp core version
 ```
 
+GitHub Codespaces では `.devcontainer/devcontainer.json` の `forwardPorts` が `webserver:80` などコンテナ側ポートを指定し、ホスト側の公開ポートは `.env` の `HOST_MACHINE_*` に従います。起動後にターミナルへ表示される `https://<codespace-name>-8080.app.github.dev/` を開いてください。
+
 詳細は `docs/devcontainer.md` を参照してください。
 
 ## 環境変数メモ

@@ -148,6 +148,8 @@ Open the repository root in Cursor or VS Code and run:
 Dev Containers: Rebuild and Reopen in Container
 ```
 
+On GitHub Codespaces, `forwardPorts` in `.devcontainer/devcontainer.json` uses `service:port` entries (for example `webserver:80`); host ports still come from `HOST_MACHINE_*` in `.env`. After startup, open the URL printed in the terminal (for example `https://<codespace-name>-8080.app.github.dev/`).
+
 See `docs/devcontainer.md` for details.
 
 ## Environment Notes

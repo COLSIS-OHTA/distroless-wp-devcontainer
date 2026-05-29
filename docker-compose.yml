@@ -3,6 +3,9 @@ services:
     build:
       context: .
       dockerfile: ./bin/wordpress/${PHPVERSION}/Dockerfile
+      # Avoid BuildKit provenance cache errors (e.g. GitHub Codespaces).
+      provenance: false
+      sbom: false
       args:
         WP_VERSION: ${WP_VERSION-latest}
         TIME_ZONE: ${TIME_ZONE-Asia/Tokyo}
@@ -43,6 +46,8 @@ services:
     build:
       context: .
       dockerfile: ./bin/wordpress/cli/Dockerfile
+      provenance: false
+      sbom: false
       args:
         WP_VERSION: ${WP_VERSION-latest}
         TIME_ZONE: ${TIME_ZONE-Asia/Tokyo}
@@ -86,6 +91,8 @@ services:
     build:
       context: .
       dockerfile: ./bin/webserver/${WEBSERVER-nginx}/Dockerfile
+      provenance: false
+      sbom: false
       args:
         WP_VERSION: ${WP_VERSION-latest}
         TIME_ZONE: ${TIME_ZONE-Asia/Tokyo}
@@ -111,6 +118,8 @@ services:
     build:
       context: .
       dockerfile: ./bin/database/${DATABASE}/Dockerfile
+      provenance: false
+      sbom: false
     image: distroless-wp:${DATABASE}
     container_name: "${COMPOSE_PROJECT_NAME}-${DATABASE}"
     restart: "always"
