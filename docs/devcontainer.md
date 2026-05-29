@@ -24,6 +24,23 @@ The existing root `docker-compose.yml` remains the source of truth for WordPress
 
 The DevContainer connects to the `dev` service only.
 
+## Docker / WP-CLI from inside the DevContainer
+
+The `dev` service does not run WordPress itself. To run `docker compose` or WP-CLI from the integrated terminal:
+
+- Feature: `docker-outside-of-docker` (Docker CLI + host socket)
+- Volume: `/var/run/docker.sock`
+- Wrapper: `compose-wp` → `docker compose exec wp-cli wp …`
+
+Examples:
+
+```bash
+docker compose ps
+compose-wp plugin list
+```
+
+After changing `.devcontainer/`, run **Dev Containers: Rebuild Container**. If you see `docker: command not found`, rebuild.
+
 ## Node / pnpm / safe-chain
 
 The `dev` image is built from `node:24-bookworm`.

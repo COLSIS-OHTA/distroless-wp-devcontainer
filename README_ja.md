@@ -92,12 +92,19 @@
 
 ### WP-CLI 実行手順（Docker Compose 経由）
 
+ローカル（DevContainer 外）では、リポジトリルートで次を実行します。
+
 - コマンド形式: `docker compose exec wp-cli wp <command>`
 - 実行例:
   - `docker compose exec wp-cli wp core version`
   - `docker compose exec wp-cli wp plugin list`
   - `docker compose exec wp-cli wp core update-db`
   - `docker compose exec -T wp-cli wp option get home`
+
+DevContainer / GitHub Codespaces **内**のターミナルでも同じコマンドが使えます（`docker-outside-of-docker` でホストの Docker ソケットに接続）。初回または `.devcontainer` 変更後は **Dev Containers: Rebuild Container** が必要です。
+
+- ショートカット: `compose-wp <command>`（例: `compose-wp plugin list`）
+- `docker: command not found` のときは DevContainer を再ビルドしてください。
 
 ### イメージとバージョンの選択
 
@@ -168,11 +175,13 @@ pnpm -v
 safe-chain --version
 ```
 
-Docker Compose の状態確認や WordPress 実行用サービスの操作は、ホスト側のターミナルから実行します。
+DevContainer 内では `docker compose` および `compose-wp` で WordPress サービスを操作できます。
 
 ```bash
 docker compose ps
 docker compose exec wp-cli wp core version
+# または
+compose-wp core version
 ```
 
 詳細は `docs/devcontainer.md` を参照してください。

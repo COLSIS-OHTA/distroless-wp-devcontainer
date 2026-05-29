@@ -12,6 +12,7 @@ services:
     working_dir: /workspaces/distroless-wp
     volumes:
       - .:/workspaces/distroless-wp:cached
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       TZ: ${TIME_ZONE:-Asia/Tokyo}
     extra_hosts:
