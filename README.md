@@ -92,12 +92,16 @@ Database access:
 
 ### Run WP-CLI (via Docker Compose)
 
+From the repository root on the host (outside DevContainer):
+
 - Command format: `docker compose exec wp-cli wp <command>`
 - Examples:
   - `docker compose exec wp-cli wp core version`
   - `docker compose exec wp-cli wp plugin list`
   - `docker compose exec wp-cli wp core update-db`
   - `docker compose exec -T wp-cli wp option get home`
+
+Inside DevContainer / GitHub Codespaces, the same commands work after **Dev Containers: Rebuild Container** (`docker-outside-of-docker` feature). Shortcut: `compose-wp <command>` (for example `compose-wp plugin list`).
 
 ### Image and Version Selection
 

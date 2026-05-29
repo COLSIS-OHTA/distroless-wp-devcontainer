@@ -30,6 +30,9 @@ USER root
 
 RUN ln -sf /home/node/.safe-chain/bin/safe-chain /usr/local/bin/safe-chain
 
+COPY .devcontainer/scripts/compose-wp.sh /usr/local/bin/compose-wp
+RUN chmod +x /usr/local/bin/compose-wp
+
 USER node
 
 WORKDIR /workspaces/distroless-wp

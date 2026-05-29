@@ -17,6 +17,13 @@
     "phpmyadmin",
     "mail"
   ],
+  "features": {
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+      "version": "latest",
+      "enableNonRootDocker": "true",
+      "moby": false
+    }
+  },
   "customizations": {
     "vscode": {
       "extensions": [
@@ -32,7 +39,7 @@
       }
     }
   },
-  "postCreateCommand": "node -v && npm -v && pnpm -v && safe-chain --version",
+  "postCreateCommand": "node -v && npm -v && pnpm -v && safe-chain --version && docker compose version",
   "postStartCommand": "echo 'DevContainer started. WordPress services are managed by Docker Compose.'",
   "shutdownAction": "stopCompose"
 }
