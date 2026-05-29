@@ -1,0 +1,18 @@
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+      args:
+        PNPM_VERSION: 10.12.1
+    image: distroless-wp-dev:node24-pnpm
+    container_name: "${COMPOSE_PROJECT_NAME:-distroless-wp}-dev"
+    init: true
+    command: sleep infinity
+    working_dir: /workspaces/distroless-wp
+    volumes:
+      - .:/workspaces/distroless-wp:cached
+    environment:
+      TZ: ${TIME_ZONE:-Asia/Tokyo}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

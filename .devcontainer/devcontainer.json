@@ -1,0 +1,38 @@
+{
+  "name": "distroless-wp",
+  "dockerComposeFile": [
+    "../docker-compose.yml",
+    "docker-compose.yml"
+  ],
+  "service": "dev",
+  "workspaceFolder": "/workspaces/distroless-wp",
+  "remoteUser": "node",
+  "updateRemoteUserUID": true,
+  "runServices": [
+    "dev",
+    "php",
+    "wp-cli",
+    "webserver",
+    "database",
+    "phpmyadmin",
+    "mail"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "bmewburn.vscode-intelephense-client",
+        "editorconfig.editorconfig",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "stylelint.vscode-stylelint"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "files.eol": "\n"
+      }
+    }
+  },
+  "postCreateCommand": "node -v && npm -v && pnpm -v && safe-chain --version",
+  "postStartCommand": "echo 'DevContainer started. WordPress services are managed by Docker Compose.'",
+  "shutdownAction": "stopCompose"
+}

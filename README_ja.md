@@ -1,20 +1,23 @@
 # distroless-wp
 
 ## 概要
+
 - Docker Compose で動作するローカル WordPress 開発スタックです。
 - WordPress コアは `/var/www/html/wp`、変更対象コンテンツは `/var/www/html/content` に配置されます。
 - `php`、`webserver`、`wp-cli` は、`gcr.io/distroless/static-debian13` を実行イメージとして利用します。
 - `wp-cli`、phpMyAdmin、Mailpit を同梱しています。
 
 ## 技術スタック
+
 - Nginx（`bin/webserver/nginx/Dockerfile`）
 - Apache HTTP Server（`bin/webserver/httpd/Dockerfile`）
-- WordPress + PHP-FPM（`bin/wordpress/php83/Dockerfile` ほか）
+- WordPress + PHP-FPM（`bin/wordpress/php83/Dockerfile`、`bin/wordpress/php84/Dockerfile`、`bin/wordpress/php85/Dockerfile`）
 - MySQL（`bin/database/mysql80/Dockerfile` または `bin/database/mysql84/Dockerfile`）
 - phpMyAdmin（`phpmyadmin`）
 - Mailpit（`axllent/mailpit`）
 
 ## 主要パス
+
 - `.env`: 既定の環境変数、ポート、イメージ選択を定義します。
 - `Makefile`: local/Fargate 向けアプリイメージのビルド補助ターゲットです。
 - `docker-compose.yml`: サービス定義、マウント、ネットワークを定義します。
@@ -30,6 +33,7 @@
 - `bin/wordpress/cli/update-wordpress-languages.sh`: `wp-cli` で言語更新を1回実行するスクリプトです。
 
 ## WordPress ディレクトリ構成（コンテナ内）
+
 ```text
 /var/www/html
 ├── index.php                # /wp/wp-blog-header.php を読み込み
@@ -47,6 +51,7 @@
 ```
 
 ## ローカル開発（Docker）
+
 1. 起動します（初回、または Dockerfile/設定変更後）: `docker compose up -d --build`
 2. アクセス:
    - `http://localhost:8080`（サイト）
@@ -56,20 +61,24 @@
 3. 停止します: `docker compose stop`
 
 永続 named volume（`dbdata`、`mailpitdata`）を初期化する場合は次を実行します。
+
 - `docker compose down -v`
 - `docker compose up -d --build`
 
 `.env` の既定ポートは次のとおりです。
+
 - HTTP: `HOST_MACHINE_UNSECURE_HOST_PORT=8080`
 - HTTPS: `HOST_MACHINE_SECURE_HOST_PORT=8443`
 - phpMyAdmin HTTP/HTTPS: `HOST_MACHINE_PMA_PORT=9080`、`HOST_MACHINE_PMA_SECURE_PORT=9443`
 - Mailpit UI: `HOST_MACHINE_MAILPIT_PORT=19980`（`mail:1025` は Docker ネットワーク内のみ利用可能）
 
 データベース接続。
+
 - `database` サービスは Compose 内部ネットワークのみ公開（`expose: 3306`）です。
 - 他コンテナからは `database:3306` で接続し、ホストからは phpMyAdmin を利用します。
 
 ### Make でイメージをビルド
+
 - 利用可能なターゲットを表示: `make`
 - local 向けアプリイメージをビルド（`DEPLOY_ENV=local`）: `make build-local`
 - Fargate 向けアプリイメージをビルド（`DEPLOY_ENV=fargate`）: `make build-fargate`
@@ -77,11 +86,12 @@
 - Fargate 向けをキャッシュなしで再ビルド: `make rebuild-fargate`
 - `build-local` はタグ接尾辞 `-local`、`build-fargate` は `-fargate` を使用します。
 - タグ例: `distroless-wp:wordpress-php84-local`、`distroless-wp:wordpress-php84-fargate`
-- `build-*` は次のアプリイメージをビルドします: `php83`, `php84`, `php85`, `nginx`, `httpd`, `wp-cli`
+- `build-*` は次のアプリイメージをビルドします: `php83`、`php84`、`php85`、`nginx`、`httpd`、`wp-cli`
 - 対象バリアントを絞る場合: `make build-fargate PHP_VERSIONS="php84" WEBSERVERS="nginx"`
 - 接尾辞を上書きする場合: `make build-fargate IMAGE_TAG_SUFFIX_FARGATE=-ecs`
 
 ### WP-CLI 実行手順（Docker Compose 経由）
+
 - コマンド形式: `docker compose exec wp-cli wp <command>`
 - 実行例:
   - `docker compose exec wp-cli wp core version`
@@ -90,6 +100,7 @@
   - `docker compose exec -T wp-cli wp option get home`
 
 ### イメージとバージョンの選択
+
 - `PHPVERSION` は PHP イメージ Dockerfile を選択します（`php83`、`php84`、`php85`）。既定値は `php84` です。
 - `DATABASE` は DB イメージ Dockerfile を選択します（`mysql80`、`mysql84`）。既定値は `mysql84` です。
 - `WEBSERVER` は Web サーバーイメージ Dockerfile を選択します（`httpd`、`nginx`）。既定値は `nginx` です。
@@ -102,7 +113,9 @@
 - Fargate 対応イメージを作る場合は、ビルド前に `DEPLOY_ENV=fargate` を指定します。
 
 ### Mailpit を使ったメール送信テスト（FluentSMTP）
+
 WordPress から同梱 Mailpit に送信する設定手順です。
+
 1. `FluentSMTP` を有効化します。
 2. SMTP は次の値で設定します。
    - Host: `mail`
@@ -112,11 +125,60 @@ WordPress から同梱 Mailpit に送信する設定手順です。
    - Auto TLS: `disable`
 
 ### HTTPS（任意）
+
 - `config/ssl` に `cert.pem` と `cert-key.pem` を配置します。
 - Nginx を使う場合は `config/nginx/conf.d/default-ssl.conf` の HTTPS サーバーブロックを有効化します。
 - `https://localhost:8443` にアクセスします。
 
+## DevContainer（Cursor / VS Code）
+
+このフォークには Cursor / VS Code 向けの DevContainer 設定が含まれています。
+
+含まれるファイルは次のとおりです。
+
+```text
+.devcontainer/
+├── devcontainer.json
+├── docker-compose.yml
+└── Dockerfile
+```
+
+WordPress 実行用サービスは distroless のまま維持します。
+
+- `php`
+- `webserver`
+- `wp-cli`
+
+エディタは `node:24-bookworm` ベースの独立した `dev` サービスに接続します。`dev` サービスは既存の `docker-compose.yml` に `.devcontainer/docker-compose.yml` を重ねて起動し、WordPress 実行用サービスと同じ Compose プロジェクト内で利用します。
+
+DevContainer 内では `node` ユーザーを使用します。`.devcontainer/Dockerfile` のイメージビルド時に `pnpm@10.12.1` と `safe-chain` をインストールするため、DevContainer を開くと Node.js、pnpm、safe-chain を利用できます。
+
+Cursor または VS Code でリポジトリルートを開き、次を実行します。
+
+```text
+Dev Containers: Rebuild and Reopen in Container
+```
+
+起動後、DevContainer 内では次のコマンドでツールのバージョンを確認できます。
+
+```bash
+node -v
+npm -v
+pnpm -v
+safe-chain --version
+```
+
+Docker Compose の状態確認や WordPress 実行用サービスの操作は、ホスト側のターミナルから実行します。
+
+```bash
+docker compose ps
+docker compose exec wp-cli wp core version
+```
+
+詳細は `docs/devcontainer.md` を参照してください。
+
 ## 環境変数メモ
+
 - `STAGE` に応じて `www/wp-config.php` のデバッグ系定数が切り替わります（`production` で無効化されます）。
 - `DEPLOY_ENV=fargate` のとき、イメージ内設定は次の値に切り替わります。
   - Web サーバー -> PHP-FPM の upstream: `127.0.0.1:9000`
