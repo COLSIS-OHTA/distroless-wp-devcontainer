@@ -30,7 +30,7 @@ USER root
 
 RUN ln -sf /home/node/.safe-chain/bin/safe-chain /usr/local/bin/safe-chain
 
-COPY .devcontainer/scripts/compose-wp.sh /usr/local/bin/compose-wp
+COPY .devcontainer/scripts/compose-wp-wrapper.sh /usr/local/bin/compose-wp
 RUN chmod +x /usr/local/bin/compose-wp \
   && echo 'node ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/node \
   && chmod 0440 /etc/sudoers.d/node

@@ -40,10 +40,11 @@
     }
   },
   "containerEnv": {
-    "DEVCONTAINER_USER": "node"
+    "DEVCONTAINER_USER": "node",
+    "DEVCONTAINER_WORKSPACE_FOLDER": "/workspaces/distroless-wp"
   },
-  "postCreateCommand": "bash .devcontainer/scripts/setup-docker-access.sh && node -v && npm -v && pnpm -v && safe-chain --version && docker compose version",
-  "postStartCommand": "bash .devcontainer/scripts/setup-docker-access.sh || true",
-  "postAttachCommand": "bash .devcontainer/scripts/setup-docker-access.sh || true",
+  "postCreateCommand": "bash .devcontainer/scripts/post-start.sh && node -v && npm -v && pnpm -v && safe-chain --version && docker compose version",
+  "postStartCommand": "bash .devcontainer/scripts/post-start.sh",
+  "postAttachCommand": "bash .devcontainer/scripts/post-start.sh",
   "shutdownAction": "stopCompose"
 }

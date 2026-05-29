@@ -40,7 +40,11 @@ compose-wp plugin list
 compose-wp core version
 ```
 
-`compose-wp` runs `docker exec` against the running `wp-cli` container (no `docker-compose.yml` path resolution on the host). After changing `.devcontainer/scripts/compose-wp.sh`, run **Dev Containers: Rebuild Container** to refresh `/usr/local/bin/compose-wp`.
+`compose-wp` is a wrapper that runs `.devcontainer/scripts/compose-wp.sh` from the workspace (updates apply after `git pull` without rebuilding the image). After changing scripts, run **Dev Containers: Reopen in Container** or:
+
+```bash
+bash .devcontainer/scripts/post-start.sh
+```
 
 If you see `permission denied while trying to connect to the docker API at unix:///var/run/docker.sock`:
 
