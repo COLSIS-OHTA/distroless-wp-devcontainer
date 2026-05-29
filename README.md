@@ -1,12 +1,14 @@
 # distroless-wp
 
 ## Overview
+
 - Docker Compose stack for local WordPress development.
 - WordPress core is placed under `/var/www/html/wp`, and mutable content is placed under `/var/www/html/content`.
 - `php`, `webserver`, and `wp-cli` are custom multi-stage images that run on `gcr.io/distroless/static-debian13`.
 - The stack includes `wp-cli`, phpMyAdmin, and Mailpit.
 
 ## Tech Stack
+
 - Nginx (`bin/webserver/nginx/Dockerfile`)
 - Apache HTTP Server (`bin/webserver/httpd/Dockerfile`)
 - WordPress + PHP-FPM (`bin/wordpress/php83/Dockerfile`, `bin/wordpress/php84/Dockerfile`, `bin/wordpress/php85/Dockerfile`)
@@ -15,6 +17,7 @@
 - Mailpit (`axllent/mailpit`)
 
 ## Key Paths
+
 - `.env`: default environment variables, ports, and image selectors
 - `Makefile`: helper targets to build local/Fargate app images
 - `docker-compose.yml`: service definitions, mounts, and networking
@@ -30,6 +33,7 @@
 - `bin/wordpress/cli/update-wordpress-languages.sh`: one-time language update script for `wp-cli`
 
 ## WordPress Layout (in Container)
+
 ```text
 /var/www/html
 ├── index.php                # loads /wp/wp-blog-header.php
@@ -47,6 +51,7 @@
 ```
 
 ## Local Development (Docker)
+
 1. Start (first run, or after Dockerfile/config changes): `docker compose up -d --build`
 2. Open:
    - `http://localhost:8080` (site)
@@ -56,20 +61,24 @@
 3. Stop: `docker compose stop`
 
 To reset persistent named volumes (`dbdata`, `mailpitdata`):
+
 - `docker compose down -v`
 - `docker compose up -d --build`
 
 Default ports in `.env`:
+
 - HTTP: `HOST_MACHINE_UNSECURE_HOST_PORT=8080`
 - HTTPS: `HOST_MACHINE_SECURE_HOST_PORT=8443`
 - phpMyAdmin HTTP/HTTPS: `HOST_MACHINE_PMA_PORT=9080`, `HOST_MACHINE_PMA_SECURE_PORT=9443`
 - Mailpit UI: `HOST_MACHINE_MAILPIT_PORT=19980` (`mail:1025` is available only inside the Docker network)
 
 Database access:
+
 - The `database` service is exposed only inside the Compose network (`expose: 3306`).
 - Use service name `database:3306` from other containers, or phpMyAdmin from the host.
 
 ### Build Images with Make
+
 - Show available targets: `make`
 - Build local app images (`DEPLOY_ENV=local`): `make build-local`
 - Build Fargate app images (`DEPLOY_ENV=fargate`): `make build-fargate`
@@ -82,6 +91,7 @@ Database access:
 - To override suffixes: `make build-fargate IMAGE_TAG_SUFFIX_FARGATE=-ecs`
 
 ### Run WP-CLI (via Docker Compose)
+
 - Command format: `docker compose exec wp-cli wp <command>`
 - Examples:
   - `docker compose exec wp-cli wp core version`
@@ -90,6 +100,7 @@ Database access:
   - `docker compose exec -T wp-cli wp option get home`
 
 ### Image and Version Selection
+
 - `PHPVERSION` selects the PHP image Dockerfile (`php83`, `php84`, `php85`), default: `php84`
 - `DATABASE` selects the database Dockerfile (`mysql80`, `mysql84`), default: `mysql84`
 - `WEBSERVER` selects the web server image Dockerfile (`httpd`, `nginx`), default: `nginx`
@@ -101,7 +112,9 @@ Database access:
 - For Fargate-compatible images, set `DEPLOY_ENV=fargate` before build.
 
 ### Mail Testing with Mailpit (FluentSMTP)
+
 To send mail to the bundled Mailpit service from WordPress:
+
 1. Activate `FluentSMTP`.
 2. Configure SMTP settings:
    - Host: `mail`
@@ -111,11 +124,34 @@ To send mail to the bundled Mailpit service from WordPress:
    - Auto TLS: `disable`
 
 ### HTTPS (optional)
+
 - Put `cert.pem` and `cert-key.pem` in `config/ssl`.
 - If using Nginx, uncomment the HTTPS server block in `config/nginx/conf.d/default-ssl.conf`.
 - Access `https://localhost:8443`.
 
+## DevContainer (Cursor / VS Code)
+
+This fork includes DevContainer support for Cursor and VS Code.
+
+The WordPress runtime services remain distroless:
+
+- `php`
+- `webserver`
+- `wp-cli`
+
+The editor connects to a separate `dev` service built from `node:24-bookworm`.
+`pnpm@10.12.1` and `safe-chain` are installed at image build time via `.devcontainer/Dockerfile`, so opening the DevContainer automatically provides Node.js, pnpm, and safe-chain.
+
+Open the repository root in Cursor or VS Code and run:
+
+```text
+Dev Containers: Rebuild and Reopen in Container
+```
+
+See `docs/devcontainer.md` for details.
+
 ## Environment Notes
+
 - `STAGE` controls WordPress debug-related constants in `www/wp-config.php` (`production` disables debug flags).
 - `DEPLOY_ENV=fargate` applies these image-level settings:
   - Web server -> PHP-FPM upstream: `127.0.0.1:9000`
