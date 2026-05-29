@@ -3,3 +3,5 @@
 /plugins/*
 /themes/*
 /uploads/*
+/ai1wm-backups/*
+!/ai1wm-backups/.gitkeep

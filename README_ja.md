@@ -22,7 +22,7 @@
 - `Makefile`: local/Fargate 向けアプリイメージのビルド補助ターゲットです。
 - `docker-compose.yml`: サービス定義、マウント、ネットワークを定義します。
 - `www/wp-config.php`: WordPress 実行時設定です（`/var/www/html/wp/wp-config.php` にマウントされます）。
-- `www/content`: ホスト側コンテンツです（`languages` / `mu-plugins` / `plugins` / `themes` / `uploads`）。
+- `www/content`: ホスト側コンテンツです（`languages` / `mu-plugins` / `plugins` / `themes` / `uploads` / `ai1wm-backups`）。
 - `config/php/php.ini`: `php` イメージおよび phpMyAdmin 用の PHP 設定です。
 - `config/nginx/nginx.conf`: イメージへコピーされる Nginx 全体設定です。
 - `config/nginx/conf.d/default.conf`: HTTP サーバー設定と WordPress ルーティングを定義します。

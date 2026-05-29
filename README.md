@@ -22,7 +22,7 @@
 - `Makefile`: helper targets to build local/Fargate app images
 - `docker-compose.yml`: service definitions, mounts, and networking
 - `www/wp-config.php`: WordPress runtime configuration (mounted to `/var/www/html/wp/wp-config.php`)
-- `www/content`: host-mounted content (`languages`, `mu-plugins`, `plugins`, `themes`, `uploads`)
+- `www/content`: host-mounted content (`languages`, `mu-plugins`, `plugins`, `themes`, `uploads`, `ai1wm-backups`)
 - `config/php/php.ini`: PHP configuration for `php` image and phpMyAdmin
 - `config/nginx/nginx.conf`: top-level Nginx configuration copied into the image
 - `config/nginx/conf.d/default.conf`: HTTP server rules and WordPress routing

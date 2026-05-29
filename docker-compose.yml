@@ -22,6 +22,7 @@ services:
       - ${WP_CONTENT_DIR-./www/content}/plugins:/var/www/html/assets/plugins:rw
       - ${WP_CONTENT_DIR-./www/content}/themes:/var/www/html/assets/themes:rw
       - ${WP_CONTENT_DIR-./www/content}/uploads:/var/www/html/assets/uploads:rw
+      - ${WP_CONTENT_DIR-./www/content}/ai1wm-backups:/var/www/html/assets/ai1wm-backups:rw
       - ${PHP_FPM_LOG_DIR-./logs/php-fpm}:/var/log/php-fpm
     environment:
       STAGE: ${STAGE-local}
@@ -64,6 +65,7 @@ services:
       - ${WP_CONTENT_DIR-./www/content}/plugins:/var/www/html/assets/plugins:rw
       - ${WP_CONTENT_DIR-./www/content}/themes:/var/www/html/assets/themes:rw
       - ${WP_CONTENT_DIR-./www/content}/uploads:/var/www/html/assets/uploads:rw
+      - ${WP_CONTENT_DIR-./www/content}/ai1wm-backups:/var/www/html/assets/ai1wm-backups:rw
     environment:
       STAGE: ${STAGE-local}
       WP_CLI_ALLOW_ROOT: "true"
