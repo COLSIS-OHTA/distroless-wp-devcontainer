@@ -39,7 +39,11 @@
       }
     }
   },
-  "postCreateCommand": "node -v && npm -v && pnpm -v && safe-chain --version && docker compose version",
-  "postStartCommand": "echo 'DevContainer started. WordPress services are managed by Docker Compose.'",
+  "containerEnv": {
+    "DEVCONTAINER_USER": "node"
+  },
+  "postCreateCommand": "bash .devcontainer/scripts/setup-docker-access.sh && node -v && npm -v && pnpm -v && safe-chain --version && docker compose version",
+  "postStartCommand": "bash .devcontainer/scripts/setup-docker-access.sh || true",
+  "postAttachCommand": "bash .devcontainer/scripts/setup-docker-access.sh || true",
   "shutdownAction": "stopCompose"
 }
