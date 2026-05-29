@@ -7,7 +7,7 @@ ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
   PATH=/home/node/.safe-chain/bin:${PATH}
 
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends ca-certificates curl \
+  && apt-get install -y --no-install-recommends ca-certificates curl sudo \
   && rm -rf /var/lib/apt/lists/*
 
 RUN npm config set fetch-retries 5 \
@@ -31,7 +31,9 @@ USER root
 RUN ln -sf /home/node/.safe-chain/bin/safe-chain /usr/local/bin/safe-chain
 
 COPY .devcontainer/scripts/compose-wp.sh /usr/local/bin/compose-wp
-RUN chmod +x /usr/local/bin/compose-wp
+RUN chmod +x /usr/local/bin/compose-wp \
+  && echo 'node ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/node \
+  && chmod 0440 /etc/sudoers.d/node
 
 USER node
 

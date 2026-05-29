@@ -42,6 +42,14 @@ compose-wp core version
 
 `compose-wp` runs `docker exec` against the running `wp-cli` container (no `docker-compose.yml` path resolution on the host). After changing `.devcontainer/scripts/compose-wp.sh`, run **Dev Containers: Rebuild Container** to refresh `/usr/local/bin/compose-wp`.
 
+If you see `permission denied while trying to connect to the docker API at unix:///var/run/docker.sock`:
+
+```bash
+bash .devcontainer/scripts/setup-docker-access.sh
+```
+
+Then open a **new terminal** (or Rebuild Container). This syncs the `docker` group GID with `/var/run/docker.sock` after `updateRemoteUserUID` runs.
+
 ## Node / pnpm / safe-chain
 
 The `dev` image is built from `node:22.22.2-bookworm`.
@@ -57,3 +65,21 @@ Open the forked `distroless-wp` repository root in VS Code / Cursor and run:
 ```txt
 Dev Containers: Reopen in Container
 ```
+
+## Troubleshooting
+
+### Stale `dev` image after Dockerfile / Node version changes
+
+If Cursor or VS Code reports **Failed to run devcontainer command** after upgrading the DevContainer (for example `node24-pnpm` → `node22-pnpm`), an old `distroless-wp-dev:*` image may still be in use.
+
+1. Stop the DevContainer / Codespace.
+2. Remove old dev images and rebuild without cache:
+
+```bash
+docker image rm distroless-wp-dev:node24-pnpm 2>/dev/null || true
+docker compose -f docker-compose.yml -f .devcontainer/docker-compose.yml build --no-cache dev
+```
+
+3. Run **Dev Containers: Rebuild Container** (or **Rebuild Container Without Cache**).
+
+On Codespaces, **Codespaces: Rebuild Container** is usually enough; if the error persists, delete the codespace and create a new one.
