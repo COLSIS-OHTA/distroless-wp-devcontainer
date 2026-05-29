@@ -79,7 +79,7 @@ if [ -z "$container" ]; then
 fi
 
 if [ -t 0 ] && [ -t 1 ]; then
-  exec docker_cli exec -it "$container" wp "$@"
+  docker_cli exec -it "$container" wp "$@"
+else
+  docker_cli exec -i "$container" wp "$@"
 fi
-
-exec docker_cli exec -i "$container" wp "$@"
