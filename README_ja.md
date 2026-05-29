@@ -156,7 +156,7 @@ WordPress 実行用サービスは distroless のまま維持します。
 - `webserver`
 - `wp-cli`
 
-エディタは `node:24-bookworm` ベースの独立した `dev` サービスに接続します。`dev` サービスは既存の `docker-compose.yml` に `.devcontainer/docker-compose.yml` を重ねて起動し、WordPress 実行用サービスと同じ Compose プロジェクト内で利用します。
+エディタは `node:22.22.2-bookworm` ベースの独立した `dev` サービスに接続します。`dev` サービスは既存の `docker-compose.yml` に `.devcontainer/docker-compose.yml` を重ねて起動し、WordPress 実行用サービスと同じ Compose プロジェクト内で利用します。
 
 DevContainer 内では `node` ユーザーを使用します。`.devcontainer/Dockerfile` のイメージビルド時に `pnpm@10.12.1` と `safe-chain` をインストールするため、DevContainer を開くと Node.js、pnpm、safe-chain を利用できます。
 
